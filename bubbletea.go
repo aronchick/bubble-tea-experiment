@@ -136,23 +136,22 @@ type quitMsg struct{}
 
 // Update handles updates to the DisplayModel
 func (m *DisplayModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
-	quitSequence := tea.Sequence(
-		CancelFunc(),
-		tea.ExitAltScreen,
-		tea.Quit,
-	)
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
-		if msg.String() == "q" || msg.String() == "ctrl+c" {
-			return m, func() tea.Msg {
-				if m.Cancel != nil {
-					m.Cancel()
-				}
-				return quitMsg{}
-			}
+		switch msg.String() {
+		case "q", "ctrl+c":
+			return m, tea.Sequence(
+				func() tea.Msg {
+					if m.Cancel != nil {
+						m.Cancel()
+					}
+					return quitMsg{}
+				},
+				tea.Quit,
+			)
 		}
 	case quitMsg:
-		return m, quitSequence
+		return m, tea.Quit
 	case models.StatusUpdateMsg:
 		m.UpdateStatus(msg.Status)
 	case models.TimeUpdateMsg:

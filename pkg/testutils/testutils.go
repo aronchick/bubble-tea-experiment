@@ -8,38 +8,37 @@ import (
 	"github.com/aronchick/bubble-tea-experiment/pkg/models"
 )
 
+var words = []string{
+	"Deploying", "Configuring", "Initializing", "Updating", "Processing",
+	"Resource", "Network", "Storage", "Compute", "Database",
+	"Server", "Cloud", "Virtual", "Container", "Cluster",
+	"Scaling", "Balancing", "Routing", "Firewall", "Gateway",
+	"Backup", "Recovery", "Monitoring", "Logging", "Analytics",
+	"API", "Microservice", "Function", "Queue", "Cache",
+	"Encryption", "Authentication", "Authorization", "Endpoint", "Protocol",
+	"Bandwidth", "Latency", "Throughput", "Packet", "Payload",
+	"Instance", "Volume", "Snapshot", "Image", "Template",
+	"Orchestration", "Provisioning", "Deprovisioning", "Allocation", "Deallocation",
+	"Replication", "Synchronization", "Failover", "Redundancy", "Resilience",
+	"Optimization", "Compression", "Indexing", "Partitioning", "Sharding",
+	"Namespace", "Repository", "Registry", "Artifact", "Pipeline",
+	"Webhook", "Trigger", "Event", "Stream", "Batch",
+	"Scheduler", "Cron", "Task", "Job", "Workflow",
+	"Module", "Package", "Library", "Framework", "SDK",
+	"Compiler", "Interpreter", "Runtime", "Debugger", "Profiler",
+	"Algorithm", "Hashing", "Encryption", "Decryption", "Encoding",
+	"Socket", "Port", "Interface", "Bridge", "Tunnel",
+	"Proxy", "Reverse-proxy", "Load-balancer", "CDN", "DNS",
+	"Certificate", "Key", "Token", "Session", "Cookie",
+	"Thread", "Process", "Daemon", "Service", "Middleware",
+}
+
 func GenerateRandomLogEntry() string {
-	words := []string{
-		"Deploying", "Configuring", "Initializing", "Updating", "Processing",
-		"Resource", "Network", "Storage", "Compute", "Database",
-		"Server", "Cloud", "Virtual", "Container", "Cluster",
-		"Scaling", "Balancing", "Routing", "Firewall", "Gateway",
-		"Backup", "Recovery", "Monitoring", "Logging", "Analytics",
-		"API", "Microservice", "Function", "Queue", "Cache",
-		"Encryption", "Authentication", "Authorization", "Endpoint", "Protocol",
-		"Bandwidth", "Latency", "Throughput", "Packet", "Payload",
-		"Instance", "Volume", "Snapshot", "Image", "Template",
-		"Orchestration", "Provisioning", "Deprovisioning", "Allocation", "Deallocation",
-		"Replication", "Synchronization", "Failover", "Redundancy", "Resilience",
-		"Optimization", "Compression", "Indexing", "Partitioning", "Sharding",
-		"Namespace", "Repository", "Registry", "Artifact", "Pipeline",
-		"Webhook", "Trigger", "Event", "Stream", "Batch",
-		"Scheduler", "Cron", "Task", "Job", "Workflow",
-		"Module", "Package", "Library", "Framework", "SDK",
-		"Compiler", "Interpreter", "Runtime", "Debugger", "Profiler",
-		"Algorithm", "Hashing", "Encryption", "Decryption", "Encoding",
-		"Socket", "Port", "Interface", "Bridge", "Tunnel",
-		"Proxy", "Reverse-proxy", "Load-balancer", "CDN", "DNS",
-		"Certificate", "Key", "Token", "Session", "Cookie",
-		"Thread", "Process", "Daemon", "Service", "Middleware",
-	}
-
 	numWords := rand.IntN(5) + 3 //nolint:gomnd,gosec
-	var logWords []string
-	for i := 0; i < numWords; i++ {
-		logWords = append(logWords, words[rand.IntN(len(words))]) //nolint:gomnd,gosec
+	logWords := make([]string, numWords)
+	for i := range logWords {
+		logWords[i] = words[rand.IntN(len(words))] //nolint:gomnd,gosec
 	}
-
 	return strings.Join(logWords, " ")
 }
 

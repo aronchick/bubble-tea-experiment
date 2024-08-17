@@ -31,8 +31,11 @@ func getRandomWords(n int) string {
 func main() {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
-	testutils.StartLogGenerator(ctx)
-	runTestDisplay(cancel)
+	go testutils.StartLogGenerator(ctx)
+	if err := runTestDisplay(cancel); err != nil {
+		fmt.Fprintf(os.Stderr, "Error running display: %v\n", err)
+		os.Exit(1)
+	}
 }
 
 func runTestDisplay(cancel context.CancelFunc) error {
