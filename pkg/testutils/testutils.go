@@ -3,9 +3,16 @@ package testutils
 import (
 	"fmt"
 	"math/rand/v2"
+	"os"
 	"strings"
+	"sync"
 
 	"github.com/aronchick/bubble-tea-experiment/pkg/models"
+)
+
+var (
+	logMutex sync.Mutex
+	logFile  *os.File
 )
 
 var words = []string{
@@ -40,6 +47,30 @@ func GenerateRandomLogEntry() string {
 		logWords[i] = words[rand.IntN(len(words))] //nolint:gomnd,gosec
 	}
 	return strings.Join(logWords, " ")
+}
+
+func WriteLogEntry(entry string) {
+	logMutex.Lock()
+	defer logMutex.Unlock()
+
+	if logFile != nil {
+		fmt.Fprintln(logFile, entry)
+	}
+}
+
+func InitLogFile(filePath string) error {
+	var err error
+	logFile, err = os.OpenFile(filePath, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+	if err != nil {
+		return fmt.Errorf("failed to open log file: %v", err)
+	}
+	return nil
+}
+
+func CloseLogFile() {
+	if logFile != nil {
+		logFile.Close()
+	}
 }
 
 func CreateRandomStatus() *models.DisplayStatus {
