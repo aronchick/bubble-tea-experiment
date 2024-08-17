@@ -119,6 +119,8 @@ func runTestDisplay(cancel context.CancelFunc) error {
 		for {
 			select {
 			case <-wordTicker.C:
+				fmt.Fprintf(LogFile, "wordTicker triggered\n")
+				LogFile.Sync()
 				for i := 0; i < totalTasks; i++ {
 					rawStatus := getRandomWords(3)
 					if len(rawStatus) > statusLength {
@@ -130,8 +132,12 @@ func runTestDisplay(cancel context.CancelFunc) error {
 					p.Send(models.StatusUpdateMsg{Status: statuses[i]})
 				}
 			case <-timeTicker.C:
+				fmt.Fprintf(LogFile, "timeTicker triggered\n")
+				LogFile.Sync()
 				p.Send(models.TimeUpdateMsg{})
 			case <-done:
+				fmt.Fprintf(LogFile, "done channel triggered\n")
+				LogFile.Sync()
 				return
 			}
 		}
