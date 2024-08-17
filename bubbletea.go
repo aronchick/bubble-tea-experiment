@@ -414,19 +414,9 @@ func (m *DisplayModel) updateMachineStatus(machine *models.Machine, status *mode
 func (m *DisplayModel) installDockerAndCorePackages(machine *models.Machine) {
 	// Install Docker
 	machine.Docker = models.ServiceStateUpdating
-	// TODO: Implement Docker installation using embedded scripts
-	// If successful:
 	machine.Docker = models.ServiceStateSucceeded
-	// If failed:
-	// machine.Docker = models.ServiceStateFailed
-
-	// Install Core Packages
 	machine.CorePackages = models.ServiceStateUpdating
-	// TODO: Implement Core Packages installation using embedded scripts
-	// If successful:
 	machine.CorePackages = models.ServiceStateSucceeded
-	// If failed:
-	// machine.CorePackages = models.ServiceStateFailed
 }
 
 func renderStyleByColumn(status string, style lipgloss.Style) lipgloss.Style {

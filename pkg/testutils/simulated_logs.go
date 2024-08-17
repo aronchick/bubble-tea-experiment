@@ -1,9 +1,7 @@
 package testutils
 
 import (
-	"context"
 	"sync"
-	"time"
 )
 
 const logBufferSize = 10
@@ -26,23 +24,4 @@ func GetLastLogLines() []string {
 	}
 
 	return logLines
-}
-
-func StartLogGenerator(ctx context.Context) {
-	go func() {
-		ticker := time.NewTicker(1 * time.Second)
-		defer ticker.Stop()
-		for {
-			select {
-			case <-ctx.Done():
-				return
-			case <-ticker.C:
-				logEntry := GenerateRandomLogEntry()
-				logBufferMutex.Lock()
-				logBuffer[logBufferIndex] = logEntry
-				logBufferIndex = (logBufferIndex + 1) % logBufferSize
-				logBufferMutex.Unlock()
-			}
-		}
-	}()
 }

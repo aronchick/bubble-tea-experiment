@@ -8,7 +8,8 @@ version = 1
 # List packages you wish to install in your environment inside
 # the `[install]` section.
 [install]
-go.pkg-path = "go"
+python312.pkg-path = "python312"
+go_1_22.pkg-path = "go_1_22"
 # hello.pkg-path = "hello"
 # nodejs = { version = "^18.4.2", pkg-path = "nodejs_18" }
 
