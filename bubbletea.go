@@ -270,15 +270,9 @@ func (m *DisplayModel) renderRow(data interface{}, baseStyle lipgloss.Style, isH
 		cellData = data.([]string)
 	}
 
-	remainingWidth := AggregateColumnWidths()
 	for i, cell := range cellData {
-		cellWidth := min(DisplayColumns[i].Width, remainingWidth)
-		if cellWidth <= 0 {
-			break
-		}
-
-		style := baseStyle.
-			Width(cellWidth)
+		cellWidth := DisplayColumns[i].Width
+		style := baseStyle.Width(cellWidth)
 
 		if DisplayColumns[i].EmojiColumn {
 			if isHeader {
@@ -286,6 +280,10 @@ func (m *DisplayModel) renderRow(data interface{}, baseStyle lipgloss.Style, isH
 			} else {
 				style = renderStyleByColumn(cell, style)
 			}
+		} else if isHeader {
+			style = style.Align(lipgloss.Left)
+		} else {
+			style = style.Align(lipgloss.Left).MaxWidth(cellWidth)
 		}
 
 		renderedCell := style.Render(cell)
@@ -294,8 +292,6 @@ func (m *DisplayModel) renderRow(data interface{}, baseStyle lipgloss.Style, isH
 		} else {
 			rowStr += renderedCell
 		}
-
-		remainingWidth -= cellWidth
 	}
 	return rowStr + "\n"
 }
