@@ -1,0 +1,144 @@
+{
+  "lockfile-version": 1,
+  "manifest": {
+    "version": 1,
+    "install": {
+      "go": {
+        "pkg-path": "go"
+      }
+    },
+    "vars": {},
+    "hook": {},
+    "profile": {},
+    "options": {
+      "systems": [
+        "aarch64-darwin",
+        "aarch64-linux",
+        "x86_64-darwin",
+        "x86_64-linux"
+      ],
+      "allow": {
+        "licenses": []
+      },
+      "semver": {}
+    }
+  },
+  "packages": [
+    {
+      "attr_path": "go",
+      "broken": false,
+      "derivation": "/nix/store/qjh0ikk8fbibyav8b3sj0hq8q5jil115-go-1.22.5.drv",
+      "description": "Go Programming language",
+      "install_id": "go",
+      "license": "BSD-3-Clause",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=a58bc8ad779655e790115244571758e8de055e3d",
+      "name": "go-1.22.5",
+      "pname": "go",
+      "rev": "a58bc8ad779655e790115244571758e8de055e3d",
+      "rev_count": 665011,
+      "rev_date": "2024-08-11T07:55:43Z",
+      "scrape_date": "2024-08-14T02:08:40Z",
+      "stabilities": [
+        "unstable"
+      ],
+      "unfree": false,
+      "version": "1.22.5",
+      "outputs_to_install": [
+        "out"
+      ],
+      "outputs": {
+        "out": "/nix/store/wkzcrvihdh5fp8h01b699k71gy28zf4l-go-1.22.5"
+      },
+      "system": "aarch64-darwin",
+      "group": "toplevel",
+      "priority": 5
+    },
+    {
+      "attr_path": "go",
+      "broken": false,
+      "derivation": "/nix/store/34dg42frf60c0pl843m96cy4rzvdcahp-go-1.22.5.drv",
+      "description": "Go Programming language",
+      "install_id": "go",
+      "license": "BSD-3-Clause",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=a58bc8ad779655e790115244571758e8de055e3d",
+      "name": "go-1.22.5",
+      "pname": "go",
+      "rev": "a58bc8ad779655e790115244571758e8de055e3d",
+      "rev_count": 665011,
+      "rev_date": "2024-08-11T07:55:43Z",
+      "scrape_date": "2024-08-14T02:08:40Z",
+      "stabilities": [
+        "unstable"
+      ],
+      "unfree": false,
+      "version": "1.22.5",
+      "outputs_to_install": [
+        "out"
+      ],
+      "outputs": {
+        "out": "/nix/store/rhcaz092rn71knyhq760qy5sjsy52d22-go-1.22.5"
+      },
+      "system": "aarch64-linux",
+      "group": "toplevel",
+      "priority": 5
+    },
+    {
+      "attr_path": "go",
+      "broken": false,
+      "derivation": "/nix/store/6cmd8rj05vil6d8a6dbhz050d8adpawc-go-1.22.5.drv",
+      "description": "Go Programming language",
+      "install_id": "go",
+      "license": "BSD-3-Clause",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=a58bc8ad779655e790115244571758e8de055e3d",
+      "name": "go-1.22.5",
+      "pname": "go",
+      "rev": "a58bc8ad779655e790115244571758e8de055e3d",
+      "rev_count": 665011,
+      "rev_date": "2024-08-11T07:55:43Z",
+      "scrape_date": "2024-08-14T02:08:40Z",
+      "stabilities": [
+        "unstable"
+      ],
+      "unfree": false,
+      "version": "1.22.5",
+      "outputs_to_install": [
+        "out"
+      ],
+      "outputs": {
+        "out": "/nix/store/1m98wp6pzhn4zx7aj8010rh549sh1qql-go-1.22.5"
+      },
+      "system": "x86_64-darwin",
+      "group": "toplevel",
+      "priority": 5
+    },
+    {
+      "attr_path": "go",
+      "broken": false,
+      "derivation": "/nix/store/fzpmnqymzz5acwpd3l7aw7fqczaf3wbg-go-1.22.5.drv",
+      "description": "Go Programming language",
+      "install_id": "go",
+      "license": "BSD-3-Clause",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=a58bc8ad779655e790115244571758e8de055e3d",
+      "name": "go-1.22.5",
+      "pname": "go",
+      "rev": "a58bc8ad779655e790115244571758e8de055e3d",
+      "rev_count": 665011,
+      "rev_date": "2024-08-11T07:55:43Z",
+      "scrape_date": "2024-08-14T02:08:40Z",
+      "stabilities": [
+        "unstable"
+      ],
+      "unfree": false,
+      "version": "1.22.5",
+      "outputs_to_install": [
+        "out"
+      ],
+      "outputs": {
+        "out": "/nix/store/kqf4gwhq1yrchvmvqjh4adc4y9hxp9xk-go-1.22.5"
+      },
+      "system": "x86_64-linux",
+      "group": "toplevel",
+      "priority": 5
+    }
+  ]
+}
