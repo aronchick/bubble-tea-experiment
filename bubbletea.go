@@ -27,7 +27,8 @@ const (
 
 // DisplayColumn represents a column in the display table
 type DisplayColumn struct {
-	Title       string
+	TextTitle   string
+	EmojiTitle  string
 	Width       int
 	Height      int
 	EmojiColumn bool
@@ -37,19 +38,19 @@ type DisplayColumn struct {
 //
 //nolint:gomnd
 var DisplayColumns = []DisplayColumn{
-	{Title: "Name", Width: 10},
-	{Title: "Type", Width: 6},
-	{Title: "Location", Width: 16},
-	{Title: "Status", Width: StatusLength},
-	{Title: "Progress", Width: 20},
-	{Title: "Time", Width: 8},
-	{Title: "Pub IP", Width: 19},
-	{Title: "Priv IP", Width: 19},
-	{Title: models.DisplayTextOrchestrator, Width: 2, EmojiColumn: true},
-	{Title: models.DisplayTextSSH, Width: 2, EmojiColumn: true},
-	{Title: models.DisplayTextDocker, Width: 2, EmojiColumn: true},
-	{Title: models.DisplayTextBacalhau, Width: 2, EmojiColumn: true},
-	{Title: "", Width: 1},
+	{TextTitle: "Name", Width: 10},
+	{TextTitle: "Type", Width: 6},
+	{TextTitle: "Location", Width: 16},
+	{TextTitle: "Status", Width: StatusLength},
+	{TextTitle: "Progress", Width: 20},
+	{TextTitle: "Time", Width: 8},
+	{TextTitle: "Pub IP", Width: 19},
+	{TextTitle: "Priv IP", Width: 19},
+	{TextTitle: models.DisplayTextOrchestrator, EmojiTitle: models.DisplayEmojiOrchestrator, Width: 2, EmojiColumn: true},
+	{TextTitle: models.DisplayTextSSH, EmojiTitle: models.DisplayEmojiSSH, Width: 2, EmojiColumn: true},
+	{TextTitle: models.DisplayTextDocker, EmojiTitle: models.DisplayEmojiDocker, Width: 2, EmojiColumn: true},
+	{TextTitle: models.DisplayTextBacalhau, EmojiTitle: models.DisplayEmojiBacalhau, Width: 2, EmojiColumn: true},
+	{TextTitle: "", Width: 1},
 }
 
 var Quitting = false
@@ -156,7 +157,6 @@ func (m *DisplayModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			return m, tea.Sequence(
 				CancelFunc(),
 				tea.ClearScreen,
-				m.printFinalTableCmd(),
 				tea.Quit,
 			)
 		}
@@ -213,7 +213,7 @@ func (m *DisplayModel) View() string {
 		Foreground(lipgloss.Color("39")).
 		Padding(0, 1)
 	cellStyle := lipgloss.NewStyle().
-		PaddingLeft(1).
+		Padding(0, 1).
 		AlignVertical(lipgloss.Center)
 	textBoxStyle := lipgloss.NewStyle().
 		Border(lipgloss.RoundedBorder()).
@@ -289,7 +289,11 @@ func (m *DisplayModel) renderRow(data interface{}, baseStyle lipgloss.Style, isH
 
 	if isHeader {
 		for _, col := range data.([]DisplayColumn) {
-			cellData = append(cellData, col.Title)
+			if EmojisEnabled && col.EmojiColumn {
+				cellData = append(cellData, col.EmojiTitle)
+			} else {
+				cellData = append(cellData, col.TextTitle)
+			}
 		}
 	} else {
 		cellData = data.([]string)
@@ -465,15 +469,6 @@ func formatElapsedTime(d time.Duration) string {
 	return fmt.Sprintf("%2d.%ds", seconds, tenths)
 }
 
-// Commands and messages
-
-func (m *DisplayModel) printFinalTableCmd() tea.Cmd {
-	return func() tea.Msg {
-		fmt.Print(m.RenderFinalTable() + "\n")
-		return nil
-	}
-}
-
 func (m *DisplayModel) updateLogCmd() tea.Cmd {
 	return func() tea.Msg {
 		logLines := testutils.GetLastLogLines()
@@ -503,16 +498,35 @@ func ConvertToEmoji(value interface{}) string {
 	case models.ServiceState:
 		switch v {
 		case models.ServiceStateNotStarted:
+			if EmojisEnabled {
+				return models.DisplayEmojiNotStarted
+			}
 			return models.DisplayTextNotStarted
 		case models.ServiceStateSucceeded:
+			if EmojisEnabled {
+				return models.DisplayEmojiSuccess
+			}
 			return models.DisplayTextSuccess
 		case models.ServiceStateUpdating:
+			if EmojisEnabled {
+				return models.DisplayEmojiWaiting
+			}
 			return models.DisplayTextWaiting
 		case models.ServiceStateCreated:
+			if EmojisEnabled {
+				return models.DisplayEmojiCreating
+			}
 			return models.DisplayTextCreating
 		case models.ServiceStateFailed:
+			if EmojisEnabled {
+				return models.DisplayEmojiFailed
+			}
 			return models.DisplayTextFailed
 		}
+	}
+
+	if EmojisEnabled {
+		return models.DisplayEmojiWaiting
 	}
 	return models.DisplayTextWaiting
 }

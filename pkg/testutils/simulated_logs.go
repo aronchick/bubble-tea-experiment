@@ -25,3 +25,11 @@ func GetLastLogLines() []string {
 
 	return logLines
 }
+
+func AppendToLogBuffer(logLine string) {
+	logBufferMutex.Lock()
+	defer logBufferMutex.Unlock()
+
+	logBuffer[logBufferIndex] = logLine
+	logBufferIndex = (logBufferIndex + 1) % logBufferSize
+}

@@ -17,6 +17,8 @@ import (
 
 const LogFilePath = "bubble-tea-experiment.log"
 
+var EmojisEnabled = false
+
 var LogFile *os.File
 
 const statusLength = 30
@@ -36,6 +38,11 @@ func getRandomWords(n int) string {
 }
 
 func main() {
+	// Check if the EmojisEnabled environment variable is set to true
+	if os.Getenv("EMOJIS_ENABLED") == "true" {
+		EmojisEnabled = true
+	}
+
 	// Create the log file
 	if err := os.WriteFile(LogFilePath, []byte{}, 0644); err != nil {
 		fmt.Fprintf(os.Stderr, "Error creating log file: %v\n", err)
@@ -160,6 +167,8 @@ func runTestDisplay(cancel context.CancelFunc) error {
 	if _, err := p.Run(); err != nil {
 		return fmt.Errorf("Error running program: %v", err)
 	}
+
+	fmt.Println(m.RenderFinalTable())
 
 	closeOnce.Do(func() { close(done) })
 	return nil
