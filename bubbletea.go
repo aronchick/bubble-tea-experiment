@@ -9,6 +9,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/aronchick/bubble-tea-experiment/pkg/logger"
 	"github.com/aronchick/bubble-tea-experiment/pkg/models"
 	"github.com/aronchick/bubble-tea-experiment/pkg/testutils"
 	tea "github.com/charmbracelet/bubbletea"
@@ -144,19 +145,13 @@ type quitMsg struct{}
 
 // Update handles updates to the DisplayModel
 func (m *DisplayModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
-	if os.Getenv("DEBUG_CHANNELS") == "1" {
-		fmt.Fprintf(LogFile, "Update function called with message type: %T\n", msg)
-		LogFile.Sync()
-	}
+	logger.Debug("Update function called with message type: %T", msg)
 
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
 		switch msg.String() {
 		case "q", "ctrl+c":
-			if os.Getenv("DEBUG_CHANNELS") == "1" {
-				fmt.Fprintf(LogFile, "Quit command detected\n")
-				LogFile.Sync()
-			}
+			logger.Debug("Quit command detected")
 			m.Quitting = true
 			return m, tea.Sequence(
 				CancelFunc(),
@@ -166,16 +161,10 @@ func (m *DisplayModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			)
 		}
 	case quitMsg:
-		if os.Getenv("DEBUG_CHANNELS") == "1" {
-			fmt.Fprintf(LogFile, "quitMsg received, quitting program\n")
-			LogFile.Sync()
-		}
+		logger.Debug("quitMsg received, quitting program")
 		return m, tea.Quit
 	case models.StatusUpdateMsg:
-		if os.Getenv("DEBUG_CHANNELS") == "1" {
-			fmt.Fprintf(LogFile, "StatusUpdateMsg received\n")
-			LogFile.Sync()
-		}
+		logger.Debug("StatusUpdateMsg received")
 		if !m.Quitting {
 			m.UpdateStatus(msg.Status)
 		}

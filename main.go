@@ -9,6 +9,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/aronchick/bubble-tea-experiment/pkg/logger"
 	"github.com/aronchick/bubble-tea-experiment/pkg/models"
 	"github.com/aronchick/bubble-tea-experiment/pkg/testutils"
 	tea "github.com/charmbracelet/bubbletea"
@@ -54,6 +55,9 @@ func main() {
 		os.Exit(1)
 	}
 	defer LogFile.Close()
+
+	// Set the log file for the logger package
+	logger.SetLogFile(LogFile)
 
 	// Ensure we flush the log file before exiting
 	defer LogFile.Sync()
