@@ -194,7 +194,8 @@ func (m *DisplayModel) View() string {
 		Border(lipgloss.RoundedBorder()).
 		BorderForeground(lipgloss.Color("63")).
 		Padding(1).
-		Height(LogLines)
+		Height(LogLines).
+		Width(130)
 	infoStyle := lipgloss.NewStyle().
 		Foreground(lipgloss.Color("241")).
 		Italic(true)
