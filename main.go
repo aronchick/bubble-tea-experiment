@@ -41,7 +41,7 @@ func main() {
 func runTestDisplay(cancel context.CancelFunc) error {
 	m := GetGlobalModel()
 	m.Cancel = cancel
-	p := tea.NewProgram(m, tea.WithAltScreen())
+	p := tea.NewProgram(m)
 
 	done := make(chan struct{})
 

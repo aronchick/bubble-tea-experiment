@@ -141,62 +141,18 @@ func (m *DisplayModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		switch msg.String() {
 		case "q", "ctrl+c":
 			return m, tea.Sequence(
-				func() tea.Msg {
-					if m.Cancel != nil {
-						m.Cancel()
-					}
-					return quitMsg{}
-				},
+				m.Cancel,
+				tea.ClearScreen,
+				m.printFinalTableCmd(),
 				tea.Quit,
 			)
 		}
-	case quitMsg:
-		return m, tea.Quit
 	case models.StatusUpdateMsg:
 		m.UpdateStatus(msg.Status)
 	case models.TimeUpdateMsg:
 		m.LastUpdate = time.Now()
 	case logLinesMsg:
 		m.TextBox = []string(msg)
-	}
-
-	// Check if all machines have completed their deployment and Docker/Core Packages installation
-	allCompleted := true
-	allDockerAndCorePackagesInstalled := true
-	for _, machine := range m.Deployment.Machines {
-		progress, total := machine.ResourcesComplete()
-		if progress != total || machine.SSH != models.ServiceStateSucceeded {
-			allCompleted = false
-			break
-		}
-		if machine.Docker != models.ServiceStateSucceeded ||
-			machine.CorePackages != models.ServiceStateSucceeded {
-			allDockerAndCorePackagesInstalled = false
-		}
-	}
-
-	// If all machines are completed and Docker/Core Packages are installed, install Bacalhau
-	if allCompleted && allDockerAndCorePackagesInstalled {
-		orchestratorInstalled := false
-		for i, machine := range m.Deployment.Machines {
-			if machine.Orchestrator && machine.Bacalhau != models.ServiceStateSucceeded {
-				m.Deployment.Machines[i].Bacalhau = models.ServiceStateUpdating
-				// TODO: Implement Bacalhau orchestrator installation
-				m.Deployment.Machines[i].Bacalhau = models.ServiceStateSucceeded
-				orchestratorInstalled = true
-				break
-			}
-		}
-
-		if orchestratorInstalled {
-			for i, machine := range m.Deployment.Machines {
-				if !machine.Orchestrator && machine.Bacalhau != models.ServiceStateSucceeded {
-					m.Deployment.Machines[i].Bacalhau = models.ServiceStateUpdating
-					// TODO: Implement Bacalhau worker installation
-					m.Deployment.Machines[i].Bacalhau = models.ServiceStateSucceeded
-				}
-			}
-		}
 	}
 
 	return m, tea.Batch(tickCmd(), m.updateLogCmd())
@@ -466,7 +422,7 @@ func formatElapsedTime(d time.Duration) string {
 
 func (m *DisplayModel) printFinalTableCmd() tea.Cmd {
 	return func() tea.Msg {
-		fmt.Print("\n" + m.RenderFinalTable() + "\n")
+		fmt.Print(m.RenderFinalTable())
 		return nil
 	}
 }
