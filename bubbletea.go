@@ -350,10 +350,10 @@ func (m *DisplayModel) getMachineRowData(machine models.Machine) []string {
 		formatElapsedTime(elapsedTime),
 		machine.PublicIP,
 		machine.PrivateIP,
-		ConvertOrchestratorToEmoji(machine.Orchestrator),
-		ConvertStateToEmoji(machine.SSH),
-		ConvertStateToEmoji(machine.Docker),
-		ConvertStateToEmoji(machine.Bacalhau),
+		ConvertToEmoji(machine.Orchestrator),
+		ConvertToEmoji(machine.SSH),
+		ConvertToEmoji(machine.Docker),
+		ConvertToEmoji(machine.Bacalhau),
 		"",
 	}
 }
@@ -514,26 +514,26 @@ func tickCmd() tea.Cmd {
 	})
 }
 
-func ConvertOrchestratorToEmoji(orchestrator bool) string {
-	orchString := models.DisplayTextWorkerNode
-	if orchestrator {
-		orchString = models.DisplayTextOrchestratorNode
-	}
-	return orchString
-}
-
-func ConvertStateToEmoji(state models.ServiceState) string {
-	switch state {
-	case models.ServiceStateNotStarted:
-		return models.DisplayTextNotStarted
-	case models.ServiceStateSucceeded:
-		return models.DisplayTextSuccess
-	case models.ServiceStateUpdating:
-		return models.DisplayTextWaiting
-	case models.ServiceStateCreated:
-		return models.DisplayTextCreating
-	case models.ServiceStateFailed:
-		return models.DisplayTextFailed
+func ConvertToEmoji(value interface{}) string {
+	switch v := value.(type) {
+	case bool:
+		if v {
+			return models.DisplayTextOrchestratorNode
+		}
+		return models.DisplayTextWorkerNode
+	case models.ServiceState:
+		switch v {
+		case models.ServiceStateNotStarted:
+			return models.DisplayTextNotStarted
+		case models.ServiceStateSucceeded:
+			return models.DisplayTextSuccess
+		case models.ServiceStateUpdating:
+			return models.DisplayTextWaiting
+		case models.ServiceStateCreated:
+			return models.DisplayTextCreating
+		case models.ServiceStateFailed:
+			return models.DisplayTextFailed
+		}
 	}
 	return models.DisplayTextWaiting
 }
