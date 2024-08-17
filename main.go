@@ -46,12 +46,16 @@ func main() {
 		os.Exit(1)
 	}
 
-	logFile, err := os.OpenFile(LogFilePath, os.O_APPEND|os.O_WRONLY, 0644)
+	var err error
+	LogFile, err = os.OpenFile(LogFilePath, os.O_APPEND|os.O_WRONLY, 0644)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error opening log file: %v\n", err)
 		os.Exit(1)
 	}
-	defer logFile.Close()
+	defer LogFile.Close()
+
+	// Ensure we flush the log file before exiting
+	defer LogFile.Sync()
 
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
@@ -69,10 +73,12 @@ func runTestDisplay(cancel context.CancelFunc) error {
 
 	done := make(chan struct{})
 	fmt.Fprintf(LogFile, "Starting runTestDisplay\n")
+	LogFile.Sync()
 
 	go func() {
 		defer close(done)
 		fmt.Fprintf(LogFile, "Starting background goroutine\n")
+		LogFile.Sync()
 		totalTasks := 5
 		statuses := make([]*models.DisplayStatus, totalTasks)
 		for i := 0; i < totalTasks; i++ {
