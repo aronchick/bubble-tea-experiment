@@ -151,11 +151,7 @@ func (m *DisplayModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				CancelFunc(),
 				tea.ClearScreen,
 				m.printFinalTableCmd(),
-				func() tea.Msg {
-					fmt.Fprintf(LogFile, "Sending quitMsg\n")
-					LogFile.Sync()
-					return quitMsg{}
-				},
+				tea.Quit,
 			)
 		}
 	case quitMsg:
@@ -177,7 +173,7 @@ func (m *DisplayModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	}
 
 	if m.Quitting {
-		return m, nil
+		return m, tea.Quit
 	}
 	return m, tea.Batch(tickCmd(), m.updateLogCmd())
 }
