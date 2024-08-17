@@ -45,8 +45,11 @@ func runTestDisplay(cancel context.CancelFunc) error {
 	p := tea.NewProgram(m, tea.WithAltScreen())
 
 	done := make(chan struct{})
+	fmt.Println("Starting runTestDisplay")
 
 	go func() {
+		defer close(done)
+		fmt.Println("Starting background goroutine")
 		totalTasks := 5
 		statuses := make([]*models.DisplayStatus, totalTasks)
 		for i := 0; i < totalTasks; i++ {

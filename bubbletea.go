@@ -125,7 +125,9 @@ func (m *DisplayModel) Init() tea.Cmd {
 func CancelFunc() tea.Cmd {
 	m := GetGlobalModel()
 	return func() tea.Msg {
+		fmt.Println("CancelFunc called")
 		if m.Cancel != nil {
+			fmt.Println("Calling cancel function")
 			m.Cancel()
 		}
 		return nil
@@ -140,17 +142,20 @@ func (m *DisplayModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	case tea.KeyMsg:
 		switch msg.String() {
 		case "q", "ctrl+c":
+			fmt.Println("Quit command detected")
 			m.Quitting = true
 			return m, tea.Sequence(
 				CancelFunc(),
 				tea.ClearScreen,
 				m.printFinalTableCmd(),
 				func() tea.Msg {
+					fmt.Println("Sending quitMsg")
 					return quitMsg{}
 				},
 			)
 		}
 	case quitMsg:
+		fmt.Println("quitMsg received, quitting program")
 		return m, tea.Quit
 	case models.StatusUpdateMsg:
 		if !m.Quitting {
