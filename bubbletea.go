@@ -193,7 +193,7 @@ func (m *DisplayModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			LogFile.Sync()
 		}
 		if !m.Quitting {
-			m.TextBox = append(m.TextBox, string(msg)...)
+			m.TextBox = append(m.TextBox, string(msg))
 			if len(m.TextBox) > LogLines {
 				m.TextBox = m.TextBox[len(m.TextBox)-LogLines:]
 			}
