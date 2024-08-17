@@ -168,7 +168,10 @@ func (m *DisplayModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		}
 	case logLinesMsg:
 		if !m.Quitting {
-			m.TextBox = []string(msg)
+			m.TextBox = append(m.TextBox, string(msg)...)
+			if len(m.TextBox) > LogLines {
+				m.TextBox = m.TextBox[len(m.TextBox)-LogLines:]
+			}
 		}
 	}
 
@@ -194,14 +197,14 @@ func (m *DisplayModel) View() string {
 		Border(lipgloss.RoundedBorder()).
 		BorderForeground(lipgloss.Color("63")).
 		Padding(1).
-		Height(LogLines).
+		Height(LogLines + 2). // Add 2 to account for the border
 		Width(130)
 	infoStyle := lipgloss.NewStyle().
 		Foreground(lipgloss.Color("241")).
 		Italic(true)
 
 	tableStr := m.renderTable(headerStyle, cellStyle)
-	logContent := strings.Join(testutils.GetLastLogLines(), "\n")
+	logContent := strings.Join(m.TextBox, "\n")
 	infoText := fmt.Sprintf(
 		"Press 'q' or Ctrl+C to quit (Last Updated: %s)",
 		m.LastUpdate.Format("15:04:05"),
@@ -461,12 +464,16 @@ func (m *DisplayModel) printFinalTableCmd() tea.Cmd {
 
 func (m *DisplayModel) updateLogCmd() tea.Cmd {
 	return func() tea.Msg {
-		return logLinesMsg(testutils.GetLastLogLines())
+		logLines := testutils.GetLastLogLines()
+		if len(logLines) > 0 {
+			return logLinesMsg(logLines[len(logLines)-1])
+		}
+		return nil
 	}
 }
 
 type tickMsg time.Time
-type logLinesMsg []string
+type logLinesMsg string
 
 func tickCmd() tea.Cmd {
 	return tea.Tick(TickerInterval, func(t time.Time) tea.Msg {
