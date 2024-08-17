@@ -152,3 +152,24 @@ func RandomIP() string {
 		rand.IntN(256), //nolint:gomnd,gosec
 	)
 }
+
+func StartLogGenerator(ctx context.Context, logFilePath string) {
+	if err := InitLogFile(logFilePath); err != nil {
+		fmt.Fprintf(os.Stderr, "Error initializing log file: %v\n", err)
+		return
+	}
+	defer CloseLogFile()
+
+	ticker := time.NewTicker(1 * time.Second)
+	defer ticker.Stop()
+
+	for {
+		select {
+		case <-ctx.Done():
+			return
+		case <-ticker.C:
+			logEntry := GenerateRandomLogEntry()
+			WriteLogEntry(logEntry)
+		}
+	}
+}
