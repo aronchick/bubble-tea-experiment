@@ -13,6 +13,10 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 )
 
+const LogFilePath = "bubble-tea-experiment.log"
+
+var LogFile *os.File
+
 const statusLength = 30
 
 var words = []string{
@@ -30,9 +34,28 @@ func getRandomWords(n int) string {
 }
 
 func main() {
+	// Create the log file
+	if err := os.WriteFile(LogFilePath, []byte{}, 0644); err != nil {
+		fmt.Fprintf(os.Stderr, "Error creating log file: %v\n", err)
+		os.Exit(1)
+	}
+
+	// Truncate the log file
+	if err := os.Truncate(LogFilePath, 0); err != nil {
+		fmt.Fprintf(os.Stderr, "Error truncating log file: %v\n", err)
+		os.Exit(1)
+	}
+
+	logFile, err := os.OpenFile(LogFilePath, os.O_APPEND|os.O_WRONLY, 0644)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Error opening log file: %v\n", err)
+		os.Exit(1)
+	}
+	defer logFile.Close()
+
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
-	go testutils.StartLogGenerator(ctx)
+	go testutils.StartLogGenerator(ctx, LogFilePath)
 	if err := runTestDisplay(cancel); err != nil {
 		fmt.Fprintf(os.Stderr, "Error running display: %v\n", err)
 		os.Exit(1)
@@ -45,11 +68,11 @@ func runTestDisplay(cancel context.CancelFunc) error {
 	p := tea.NewProgram(m, tea.WithAltScreen())
 
 	done := make(chan struct{})
-	fmt.Println("Starting runTestDisplay")
+	fmt.Fprintf(LogFile, "Starting runTestDisplay\n")
 
 	go func() {
 		defer close(done)
-		fmt.Println("Starting background goroutine")
+		fmt.Fprintf(LogFile, "Starting background goroutine\n")
 		totalTasks := 5
 		statuses := make([]*models.DisplayStatus, totalTasks)
 		for i := 0; i < totalTasks; i++ {
