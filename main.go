@@ -104,17 +104,10 @@ func runTestDisplay(cancel context.CancelFunc) error {
 		}
 	}()
 
-	go func() {
-		if _, err := p.Run(); err != nil {
-			errChan <- fmt.Errorf("Error running program: %v", err)
-		}
-		close(done)
-	}()
-
-	select {
-	case err := <-errChan:
-		return err
-	case <-done:
-		return nil
+	if _, err := p.Run(); err != nil {
+		return fmt.Errorf("Error running program: %v", err)
 	}
+
+	close(done)
+	return nil
 }

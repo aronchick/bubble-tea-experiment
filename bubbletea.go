@@ -145,17 +145,30 @@ func (m *DisplayModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				CancelFunc(),
 				tea.ClearScreen,
 				m.printFinalTableCmd(),
-				tea.Quit,
+				func() tea.Msg {
+					return quitMsg{}
+				},
 			)
 		}
+	case quitMsg:
+		return m, tea.Quit
 	case models.StatusUpdateMsg:
-		m.UpdateStatus(msg.Status)
+		if !m.Quitting {
+			m.UpdateStatus(msg.Status)
+		}
 	case models.TimeUpdateMsg:
-		m.LastUpdate = time.Now()
+		if !m.Quitting {
+			m.LastUpdate = time.Now()
+		}
 	case logLinesMsg:
-		m.TextBox = []string(msg)
+		if !m.Quitting {
+			m.TextBox = []string(msg)
+		}
 	}
 
+	if m.Quitting {
+		return m, nil
+	}
 	return m, tea.Batch(tickCmd(), m.updateLogCmd())
 }
 
