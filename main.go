@@ -42,7 +42,7 @@ func main() {
 func runTestDisplay(cancel context.CancelFunc) error {
 	m := GetGlobalModel()
 	m.Cancel = cancel
-	p := tea.NewProgram(m)
+	p := tea.NewProgram(m, tea.WithAltScreen())
 
 	done := make(chan struct{})
 
@@ -103,14 +103,10 @@ func runTestDisplay(cancel context.CancelFunc) error {
 		}
 	}()
 
-	go func() {
-		if _, err := p.Run(); err != nil {
-			fmt.Println("Error running program:", err)
-		}
-		close(done)
-	}()
-
-	<-done
+	if _, err := p.Run(); err != nil {
+		fmt.Println("Error running program:", err)
+		return err
+	}
 
 	return nil
 }

@@ -140,7 +140,9 @@ func (m *DisplayModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	case tea.KeyMsg:
 		switch msg.String() {
 		case "q", "ctrl+c":
+			m.Quitting = true
 			return m, tea.Sequence(
+				CancelFunc(),
 				tea.ClearScreen,
 				m.printFinalTableCmd(),
 				tea.Quit,
