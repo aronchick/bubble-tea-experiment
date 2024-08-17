@@ -125,11 +125,15 @@ func (m *DisplayModel) Init() tea.Cmd {
 func CancelFunc() tea.Cmd {
 	m := GetGlobalModel()
 	return func() tea.Msg {
-		fmt.Fprintf(LogFile, "CancelFunc called\n")
-		LogFile.Sync()
-		if m.Cancel != nil {
-			fmt.Fprintf(LogFile, "Calling cancel function\n")
+		if os.Getenv("DEBUG_CHANNELS") == "1" {
+			fmt.Fprintf(LogFile, "CancelFunc called\n")
 			LogFile.Sync()
+		}
+		if m.Cancel != nil {
+			if os.Getenv("DEBUG_CHANNELS") == "1" {
+				fmt.Fprintf(LogFile, "Calling cancel function\n")
+				LogFile.Sync()
+			}
 			m.Cancel()
 		}
 		return nil
@@ -140,15 +144,19 @@ type quitMsg struct{}
 
 // Update handles updates to the DisplayModel
 func (m *DisplayModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
-	fmt.Fprintf(LogFile, "Update function called with message type: %T\n", msg)
-	LogFile.Sync()
+	if os.Getenv("DEBUG_CHANNELS") == "1" {
+		fmt.Fprintf(LogFile, "Update function called with message type: %T\n", msg)
+		LogFile.Sync()
+	}
 
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
 		switch msg.String() {
 		case "q", "ctrl+c":
-			fmt.Fprintf(LogFile, "Quit command detected\n")
-			LogFile.Sync()
+			if os.Getenv("DEBUG_CHANNELS") == "1" {
+				fmt.Fprintf(LogFile, "Quit command detected\n")
+				LogFile.Sync()
+			}
 			m.Quitting = true
 			return m, tea.Sequence(
 				CancelFunc(),
@@ -158,24 +166,32 @@ func (m *DisplayModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			)
 		}
 	case quitMsg:
-		fmt.Fprintf(LogFile, "quitMsg received, quitting program\n")
-		LogFile.Sync()
+		if os.Getenv("DEBUG_CHANNELS") == "1" {
+			fmt.Fprintf(LogFile, "quitMsg received, quitting program\n")
+			LogFile.Sync()
+		}
 		return m, tea.Quit
 	case models.StatusUpdateMsg:
-		fmt.Fprintf(LogFile, "StatusUpdateMsg received\n")
-		LogFile.Sync()
+		if os.Getenv("DEBUG_CHANNELS") == "1" {
+			fmt.Fprintf(LogFile, "StatusUpdateMsg received\n")
+			LogFile.Sync()
+		}
 		if !m.Quitting {
 			m.UpdateStatus(msg.Status)
 		}
 	case models.TimeUpdateMsg:
-		fmt.Fprintf(LogFile, "TimeUpdateMsg received\n")
-		LogFile.Sync()
+		if os.Getenv("DEBUG_CHANNELS") == "1" {
+			fmt.Fprintf(LogFile, "TimeUpdateMsg received\n")
+			LogFile.Sync()
+		}
 		if !m.Quitting {
 			m.LastUpdate = time.Now()
 		}
 	case logLinesMsg:
-		fmt.Fprintf(LogFile, "logLinesMsg received\n")
-		LogFile.Sync()
+		if os.Getenv("DEBUG_CHANNELS") == "1" {
+			fmt.Fprintf(LogFile, "logLinesMsg received\n")
+			LogFile.Sync()
+		}
 		if !m.Quitting {
 			m.TextBox = append(m.TextBox, string(msg)...)
 			if len(m.TextBox) > LogLines {
@@ -185,12 +201,16 @@ func (m *DisplayModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	}
 
 	if m.Quitting {
-		fmt.Fprintf(LogFile, "Model is quitting, returning tea.Quit\n")
-		LogFile.Sync()
+		if os.Getenv("DEBUG_CHANNELS") == "1" {
+			fmt.Fprintf(LogFile, "Model is quitting, returning tea.Quit\n")
+			LogFile.Sync()
+		}
 		return m, tea.Quit
 	}
-	fmt.Fprintf(LogFile, "Returning batch commands: tickCmd and updateLogCmd\n")
-	LogFile.Sync()
+	if os.Getenv("DEBUG_CHANNELS") == "1" {
+		fmt.Fprintf(LogFile, "Returning batch commands: tickCmd and updateLogCmd\n")
+		LogFile.Sync()
+	}
 	return m, tea.Batch(tickCmd(), m.updateLogCmd())
 }
 

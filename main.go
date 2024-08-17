@@ -74,13 +74,17 @@ func runTestDisplay(cancel context.CancelFunc) error {
 
 	done := make(chan struct{})
 	closeOnce := sync.Once{}
-	fmt.Fprintf(LogFile, "Starting runTestDisplay\n")
-	LogFile.Sync()
+	if os.Getenv("DEBUG_CHANNELS") == "1" {
+		fmt.Fprintf(LogFile, "Starting runTestDisplay\n")
+		LogFile.Sync()
+	}
 
 	go func() {
 		defer closeOnce.Do(func() { close(done) })
-		fmt.Fprintf(LogFile, "Starting background goroutine\n")
-		LogFile.Sync()
+		if os.Getenv("DEBUG_CHANNELS") == "1" {
+			fmt.Fprintf(LogFile, "Starting background goroutine\n")
+			LogFile.Sync()
+		}
 		totalTasks := 5
 		statuses := make([]*models.DisplayStatus, totalTasks)
 		for i := 0; i < totalTasks; i++ {
@@ -119,8 +123,10 @@ func runTestDisplay(cancel context.CancelFunc) error {
 		for {
 			select {
 			case <-wordTicker.C:
-				fmt.Fprintf(LogFile, "wordTicker triggered\n")
-				LogFile.Sync()
+				if os.Getenv("DEBUG_CHANNELS") == "1" {
+					fmt.Fprintf(LogFile, "wordTicker triggered\n")
+					LogFile.Sync()
+				}
 				for i := 0; i < totalTasks; i++ {
 					rawStatus := getRandomWords(3)
 					if len(rawStatus) > statusLength {
@@ -132,12 +138,16 @@ func runTestDisplay(cancel context.CancelFunc) error {
 					p.Send(models.StatusUpdateMsg{Status: statuses[i]})
 				}
 			case <-timeTicker.C:
-				fmt.Fprintf(LogFile, "timeTicker triggered\n")
-				LogFile.Sync()
+				if os.Getenv("DEBUG_CHANNELS") == "1" {
+					fmt.Fprintf(LogFile, "timeTicker triggered\n")
+					LogFile.Sync()
+				}
 				p.Send(models.TimeUpdateMsg{})
 			case <-done:
-				fmt.Fprintf(LogFile, "done channel triggered\n")
-				LogFile.Sync()
+				if os.Getenv("DEBUG_CHANNELS") == "1" {
+					fmt.Fprintf(LogFile, "done channel triggered\n")
+					LogFile.Sync()
+				}
 				return
 			}
 		}
