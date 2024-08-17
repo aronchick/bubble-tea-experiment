@@ -45,7 +45,6 @@ func runTestDisplay(cancel context.CancelFunc) error {
 	p := tea.NewProgram(m, tea.WithAltScreen())
 
 	done := make(chan struct{})
-	errChan := make(chan error, 1)
 
 	go func() {
 		totalTasks := 5
