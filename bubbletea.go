@@ -184,15 +184,9 @@ func (m *DisplayModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 // View renders the DisplayModel
 func (m *DisplayModel) View() string {
-	width, _ := tea.WindowSize()
-	if width == 0 {
-		width = AggregateColumnWidths() + 4 // Add some padding
-	}
-
 	tableStyle := lipgloss.NewStyle().
 		BorderStyle(lipgloss.NormalBorder()).
-		BorderForeground(lipgloss.Color("240")).
-		MaxWidth(width)
+		BorderForeground(lipgloss.Color("240"))
 	headerStyle := lipgloss.NewStyle().
 		Bold(true).
 		Foreground(lipgloss.Color("39")).
@@ -204,8 +198,7 @@ func (m *DisplayModel) View() string {
 		Border(lipgloss.RoundedBorder()).
 		BorderForeground(lipgloss.Color("63")).
 		Padding(1).
-		Height(LogLines).
-		MaxWidth(width - 4) // Subtract border width
+		Height(LogLines)
 	infoStyle := lipgloss.NewStyle().
 		Foreground(lipgloss.Color("241")).
 		Italic(true)
@@ -225,7 +218,7 @@ func (m *DisplayModel) View() string {
 		infoStyle.Render(infoText),
 	)
 
-	return lipgloss.NewStyle().MaxWidth(width).Render(renderedContent)
+	return lipgloss.NewStyle().Render(renderedContent)
 }
 
 // RenderFinalTable renders the final table
@@ -248,19 +241,14 @@ func (m *DisplayModel) UpdateStatus(status *models.DisplayStatus) {
 // Helper functions
 
 func (m *DisplayModel) renderTable(headerStyle, cellStyle lipgloss.Style) string {
-	width, _ := tea.WindowSize()
-	if width == 0 {
-		width = AggregateColumnWidths() + 4 // Add some padding
-	}
-
 	var tableStr string
-	tableStr += m.renderRow(DisplayColumns, headerStyle, true, width)
+	tableStr += m.renderRow(DisplayColumns, headerStyle, true)
 	if m.DebugMode {
-		tableStr += strings.Repeat("-", min(AggregateColumnWidths(), width)) + "\n"
+		tableStr += strings.Repeat("-", AggregateColumnWidths()) + "\n"
 	}
 	for _, machine := range m.Deployment.Machines {
 		if machine.Name != "" {
-			tableStr += m.renderRow(m.getMachineRowData(machine), cellStyle, false, width)
+			tableStr += m.renderRow(m.getMachineRowData(machine), cellStyle, false)
 		}
 	}
 	return tableStr
@@ -273,7 +261,7 @@ func min(a, b int) int {
 	return b
 }
 
-func (m *DisplayModel) renderRow(data interface{}, baseStyle lipgloss.Style, isHeader bool, maxWidth int) string {
+func (m *DisplayModel) renderRow(data interface{}, baseStyle lipgloss.Style, isHeader bool) string {
 	var rowStr string
 	var cellData []string
 
@@ -285,7 +273,7 @@ func (m *DisplayModel) renderRow(data interface{}, baseStyle lipgloss.Style, isH
 		cellData = data.([]string)
 	}
 
-	remainingWidth := maxWidth
+	remainingWidth := AggregateColumnWidths()
 	for i, cell := range cellData {
 		cellWidth := min(DisplayColumns[i].Width, remainingWidth)
 		if cellWidth <= 0 {
@@ -293,8 +281,7 @@ func (m *DisplayModel) renderRow(data interface{}, baseStyle lipgloss.Style, isH
 		}
 
 		style := baseStyle.
-			Width(cellWidth).
-			MaxWidth(cellWidth)
+			Width(cellWidth)
 
 		if DisplayColumns[i].EmojiColumn {
 			if isHeader {
