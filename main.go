@@ -72,11 +72,12 @@ func runTestDisplay(cancel context.CancelFunc) error {
 	p := tea.NewProgram(m, tea.WithAltScreen())
 
 	done := make(chan struct{})
+	closeOnce := sync.Once{}
 	fmt.Fprintf(LogFile, "Starting runTestDisplay\n")
 	LogFile.Sync()
 
 	go func() {
-		defer close(done)
+		defer closeOnce.Do(func() { close(done) })
 		fmt.Fprintf(LogFile, "Starting background goroutine\n")
 		LogFile.Sync()
 		totalTasks := 5
@@ -139,6 +140,6 @@ func runTestDisplay(cancel context.CancelFunc) error {
 		return fmt.Errorf("Error running program: %v", err)
 	}
 
-	close(done)
+	closeOnce.Do(func() { close(done) })
 	return nil
 }
