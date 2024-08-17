@@ -479,7 +479,7 @@ func formatElapsedTime(d time.Duration) string {
 
 func (m *DisplayModel) printFinalTableCmd() tea.Cmd {
 	return func() tea.Msg {
-		fmt.Print(m.RenderFinalTable())
+		fmt.Print(m.RenderFinalTable() + "\n")
 		return nil
 	}
 }
